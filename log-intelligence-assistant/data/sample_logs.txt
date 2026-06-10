@@ -1,0 +1,21 @@
+2024-01-15 01:58:22 INFO  api-gateway Request received: POST /api/v1/payment user_id=4821
+2024-01-15 01:58:23 INFO  payment-service Processing payment request amount=2500 user_id=4821
+2024-01-15 01:58:24 INFO  auth-service Validating token for user_id=4821
+2024-01-15 01:58:25 ERROR auth-service Authentication token expired for user_id=4821 token_age=86420s
+2024-01-15 01:58:25 ERROR payment-service Authentication failed — aborting transaction user_id=4821
+2024-01-15 01:58:26 WARN  api-gateway Payment request failed for user_id=4821 — returning 401
+2024-01-15 02:10:11 INFO  payment-service Retry attempt 1 of 3 for user_id=4821
+2024-01-15 02:10:12 ERROR auth-service Token refresh failed — auth-db unreachable host=auth-db-primary
+2024-01-15 02:10:13 ERROR payment-service Retry failed — auth-service unavailable
+2024-01-15 02:13:44 ERROR payment-service Database connection pool exhausted — 100/100 connections used
+2024-01-15 02:13:51 ERROR db-service Query timeout after 30000ms on table=transactions
+2024-01-15 02:14:02 INFO  api-gateway Retry attempt 3 of 3 for payment-service endpoint
+2024-01-15 02:14:15 WARN  payment-service Response time 8200ms exceeds SLA threshold of 2000ms
+2024-01-15 02:14:16 ERROR payment-service Circuit breaker OPEN — stopping requests to db-service
+2024-01-15 02:14:17 WARN  api-gateway Returning 503 Service Unavailable to client
+2024-01-15 02:30:00 INFO  ops-team Manual intervention — restarting auth-db-primary
+2024-01-15 02:31:15 INFO  auth-service auth-db-primary reconnected successfully
+2024-01-15 02:31:20 INFO  payment-service Connection pool recovering — 45/100 connections active
+2024-01-15 02:32:00 INFO  payment-service Circuit breaker CLOSED — resuming normal operations
+2024-01-15 02:32:10 INFO  api-gateway Service health restored — all endpoints responding
+2024-01-15 06:00:00 INFO  monitoring-service Daily health check passed — all services nominal

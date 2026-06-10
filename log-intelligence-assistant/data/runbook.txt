@@ -1,0 +1,46 @@
+RUNBOOK — Payment Service Incident Response
+Version 2.1 | Last updated 2024-01-10 | Owner: Platform Operations
+
+--- SECTION 1: Authentication Failures ---
+Symptom: ERROR auth-service Authentication token expired
+Cause: Token TTL set to 86400s. Tokens older than 24 hours are rejected.
+Immediate action: Check auth-db-primary connectivity. Token refresh requires auth-db to be reachable.
+Resolution steps:
+1. Verify auth-db-primary status: ping auth-db-primary from payment-service pod
+2. If auth-db unreachable: restart auth-db-primary using ops runbook RB-204
+3. Once auth-db recovered: tokens will refresh automatically within 60 seconds
+4. Confirm recovery: look for INFO auth-service Token refresh successful in logs
+Escalation: If auth-db does not recover within 10 minutes, page on-call DBA team
+
+--- SECTION 2: Connection Pool Exhaustion ---
+Symptom: ERROR payment-service Database connection pool exhausted 100/100 connections
+Cause: High query volume or slow queries holding connections open longer than expected
+Immediate action: Check db-service for long-running queries. Check payment-service for connection leaks.
+Resolution steps:
+1. Run SHOW PROCESSLIST on db-service to identify long-running queries
+2. Kill queries running longer than 60 seconds: KILL QUERY <process_id>
+3. Restart payment-service to release leaked connections if pool does not recover within 5 minutes
+4. Monitor pool recovery: look for connection pool recovering in logs
+Escalation: If pool does not recover after restart, scale db-service horizontally
+
+--- SECTION 3: Circuit Breaker Open ---
+Symptom: ERROR payment-service Circuit breaker OPEN
+Cause: Downstream dependency (db-service or auth-service) has exceeded error threshold
+Immediate action: Identify which downstream service triggered the circuit breaker
+Resolution steps:
+1. Check logs for which service caused errors immediately before circuit breaker opened
+2. Resolve the downstream service issue first — circuit breaker will not close until errors stop
+3. Circuit breaker closes automatically once error rate drops below threshold for 30 seconds
+4. If circuit breaker does not close automatically: restart payment-service
+Escalation: Page payment-service team if circuit breaker remains open longer than 15 minutes
+
+--- SECTION 4: SLA Breach ---
+Symptom: WARN payment-service Response time exceeds SLA threshold of 2000ms
+Cause: Slow downstream dependencies, high load, or resource contention
+Immediate action: Check db-service query times and payment-service CPU and memory
+Resolution steps:
+1. Check payment-service resource usage: kubectl top pod payment-service
+2. Check db-service slow query log for queries exceeding 1000ms
+3. If CPU above 80%: scale payment-service horizontally
+4. If db queries slow: add index or optimize query
+Escalation: If response time does not recover within 20 minutes, page platform lead

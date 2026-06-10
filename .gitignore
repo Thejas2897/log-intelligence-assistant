@@ -2,3 +2,4 @@
 *.mp4
 *.odt
 .~lock.*
+log-intelligence-assistant/chroma_db/
