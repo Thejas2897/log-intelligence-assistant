@@ -1,0 +1,5 @@
+experiments/aws-deploy/Thejas-LLM_accessKeys.csv
+experiments/aws-deploy/*.csv
+experiments/**/*.csv
+experiments/aws-deploy/response.json
+experiments/**/*.Zone.Identifier
