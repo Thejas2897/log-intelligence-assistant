@@ -1,0 +1,27 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+      ],
+      "Resource": "arn:aws:logs:us-east-1:219346039604:*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "bedrock:RetrieveAndGenerate",
+        "bedrock:Retrieve"
+      ],
+      "Resource": "arn:aws:bedrock:us-east-1:219346039604:knowledge-base/XXE2NZKLC5"
+    },
+    {
+      "Effect": "Allow",
+      "Action": "bedrock:InvokeModel",
+      "Resource": "arn:aws:bedrock:us-east-1::foundation-model/amazon.nova-lite-v1:0"
+    }
+  ]
+}
